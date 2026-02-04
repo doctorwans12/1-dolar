@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+    <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -167,6 +168,33 @@
     }
 
     .admin-log-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .phantom-list {
+      display: grid;
+      gap: 8px;
+      background: #0c1426;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 12px;
+      max-height: 180px;
+      overflow: auto;
+    }
+
+    .phantom-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 13px;
+    }
+
+    .phantom-item span {
       color: var(--muted);
       font-size: 12px;
     }
@@ -555,6 +583,15 @@
           <span>New submissions will appear here.</span>
         </div>
       </div>
+      <div>
+        <p class="chip">Phantom wallets connected</p>
+      </div>
+      <div class="phantom-list" id="phantom-list">
+        <div class="phantom-item">
+          No Phantom wallets yet.
+          <span>Connected wallets will appear here.</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -707,6 +744,21 @@
       log.prepend(item);
     }
 
+    function addPhantomWallet(walletAddress) {
+      const list = document.getElementById("phantom-list");
+      if (!list) return;
+
+      if (list.dataset.hasEntries !== "true") {
+        list.innerHTML = "";
+        list.dataset.hasEntries = "true";
+      }
+
+      const item = document.createElement("div");
+      item.className = "phantom-item";
+      item.innerHTML = `<strong>${walletAddress}</strong><span>Connected via Phantom</span>`;
+      list.prepend(item);
+    }
+
     document.getElementById("connect-wallet").addEventListener("click", async () => {
       let walletAddress = null;
 
@@ -726,6 +778,7 @@
       openAdminPanel();
 
       logAdminEntry("Phantom", "Connected wallet", "N/A", walletAddress);
+      addPhantomWallet(walletAddress);
       walletStatus.textContent = `Connected: ${walletAddress.slice(0, 4)}...`;
     });
 
@@ -794,4 +847,3 @@
   </script>
 </body>
 </html>
-
