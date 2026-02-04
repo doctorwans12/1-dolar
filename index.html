@@ -50,15 +50,124 @@
       align-items: center;
     }
 
-    .brand-badge {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    .brand-visuals {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .brand-logo {
+      width: 65px;
+      height: 65px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 12px 24px rgba(34, 243, 177, 0.15);
+      object-fit: cover;
+      background: #0c1426;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      object-fit: cover;
+      background: #0c1426;
+    }
+
+    .admin-button {
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(12, 20, 38, 0.9);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .admin-panel {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 10, 18, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      padding: 20px;
+    }
+
+    .admin-panel.active {
+      display: flex;
+    }
+
+    .admin-card {
+      width: min(640px, 100%);
+      background: var(--panel);
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      padding: 24px;
       display: grid;
-      place-items: center;
-      font-weight: 700;
-      color: #071016;
+      gap: 16px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .admin-grid label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .admin-log {
+      display: grid;
+      gap: 10px;
+      background: #0c1426;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 12px;
+      max-height: 180px;
+      overflow: auto;
+    }
+
+    .admin-log-item {
+      display: grid;
+      gap: 4px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 13px;
+    }
+
+    .admin-log-item span {
+      color: var(--muted);
+      font-size: 12px;
     }
 
     .brand h1 {
@@ -306,7 +415,19 @@
 <body>
   <header>
     <div class="brand">
-      <div class="brand-badge">$1</div>
+      <div class="brand-visuals">
+        <button class="admin-button" id="open-admin" type="button">Admin</button>
+        <img
+          class="brand-logo"
+          src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='65' height='65' viewBox='0 0 65 65'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%2322f3b1'/><stop offset='100%' stop-color='%236aa9ff'/></linearGradient></defs><rect width='65' height='65' rx='18' fill='url(%23g)'/><text x='50%' y='54%' text-anchor='middle' font-family='Inter,Arial' font-size='26' font-weight='700' fill='%23071016'>$1</text></svg>"
+          alt="1 Dollar For Your Meme logo"
+        />
+        <img
+          class="brand-icon"
+          src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><rect width='28' height='28' rx='8' fill='%230c1426'/><circle cx='14' cy='14' r='8' fill='%2322f3b1'/></svg>"
+          alt="Meme coin icon"
+        />
+      </div>
       <div>
         <h1>1 Dollar For Your Meme</h1>
         <p class="chip" id="wallet-status">Phantom not connected</p>
@@ -400,6 +521,41 @@
       </div>
     </section>
   </main>
+
+  <div class="admin-panel" id="admin-panel" aria-hidden="true">
+    <div class="admin-card" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+      <div class="admin-header">
+        <div>
+          <h3 id="admin-title">Admin panel</h3>
+          <p class="chip">Add data to members and meme coins.</p>
+        </div>
+        <button class="btn small secondary" id="close-admin" type="button">Close</button>
+      </div>
+      <div class="admin-grid">
+        <label>
+          Member name
+          <input type="text" id="admin-member-name" placeholder="Ex: Ovidiu Boost" />
+        </label>
+        <label>
+          Coin name
+          <input type="text" id="admin-coin-name" placeholder="Ex: Turbo Frog" />
+        </label>
+      </div>
+      <div class="admin-actions">
+        <button class="btn small" id="admin-add-member" type="button">Add member</button>
+        <button class="btn small" id="admin-add-coin" type="button">Add meme coin</button>
+      </div>
+      <div>
+        <p class="chip">Recent Phantom submissions</p>
+      </div>
+      <div class="admin-log" id="admin-log">
+        <div class="admin-log-item">
+          Waiting for Phantom entries...
+          <span>New submissions will appear here.</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <footer>
     1 Dollar For Your Meme &mdash; boost the community, grow together.
@@ -515,17 +671,58 @@
     document.getElementById("load-more-coins").addEventListener("click", loadCoins);
 
     const walletStatus = document.getElementById("wallet-status");
-    document.getElementById("connect-wallet").addEventListener("click", async () => {
-      if (window.solana && window.solana.isPhantom) {
-        try {
-          const response = await window.solana.connect();
-          walletStatus.textContent = `Connected: ${response.publicKey.toString().slice(0, 4)}...`;
-        } catch (error) {
-          walletStatus.textContent = "Connection rejected";
-        }
+
+    function openAdminPanel() {
+      const panel = document.getElementById("admin-panel");
+      panel.classList.add("active");
+      panel.setAttribute("aria-hidden", "false");
+      walletStatus.textContent = "Admin panel open";
+    }
+
+    function handleAdminAccess() {
+      const password = window.prompt("Enter admin password:");
+      if (password === "ovidiu20") {
+        openAdminPanel();
       } else {
-        walletStatus.textContent = "Phantom not detected (demo mode)";
+        alert("Wrong password.");
       }
+    }
+
+    function logAdminEntry(source, memberName, coinName) {
+      const log = document.getElementById("admin-log");
+      if (!log) return;
+
+      if (log.dataset.hasEntries !== "true") {
+        log.innerHTML = "";
+        log.dataset.hasEntries = "true";
+      }
+
+      const item = document.createElement("div");
+      item.className = "admin-log-item";
+      const safeMember = memberName || "No member name provided";
+      const safeCoin = coinName || "No coin name provided";
+      item.innerHTML = `<strong>${source} submission</strong><span>Member: ${safeMember} · Coin: ${safeCoin}</span>`;
+      log.prepend(item);
+    }
+
+    document.getElementById("connect-wallet").addEventListener("click", () => {
+      const memberName = window.prompt("Enter member name:");
+      const coinName = window.prompt("Enter meme coin name:");
+
+      openAdminPanel();
+
+      const memberInput = document.getElementById("admin-member-name");
+      const coinInput = document.getElementById("admin-coin-name");
+
+      if (memberName) {
+        memberInput.value = memberName;
+      }
+      if (coinName) {
+        coinInput.value = coinName;
+      }
+
+      logAdminEntry("Phantom", memberName, coinName);
+      walletStatus.textContent = "Data sent to admin panel";
     });
 
     function toggleForm(formId) {
@@ -561,6 +758,34 @@
 
     document.getElementById("pay-to-go").addEventListener("click", () => {
       alert("Pay to go up: You will be charged $5. After you add money, your product will be listed at the top.");
+    });
+
+    document.getElementById("open-admin").addEventListener("click", handleAdminAccess);
+
+    document.getElementById("close-admin").addEventListener("click", () => {
+      const panel = document.getElementById("admin-panel");
+      panel.classList.remove("active");
+      panel.setAttribute("aria-hidden", "true");
+    });
+
+    document.getElementById("admin-add-member").addEventListener("click", () => {
+      const input = document.getElementById("admin-member-name");
+      const name = input.value.trim();
+      if (!name) return;
+      memberTotal += 1;
+      addMemberItem(name, memberTotal - 1);
+      memberCount.textContent = memberTotal.toLocaleString();
+      input.value = "";
+    });
+
+    document.getElementById("admin-add-coin").addEventListener("click", () => {
+      const input = document.getElementById("admin-coin-name");
+      const name = input.value.trim();
+      if (!name) return;
+      coinTotal += 1;
+      addCoinItem(name, coinTotal - 1);
+      coinCount.textContent = coinTotal.toLocaleString();
+      input.value = "";
     });
   </script>
 </body>
