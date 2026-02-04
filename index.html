@@ -90,6 +90,7 @@
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.6px;
+      display: none;
     }
 
     .admin-panel {
@@ -688,7 +689,7 @@
       }
     }
 
-    function logAdminEntry(source, memberName, coinName) {
+    function logAdminEntry(source, memberName, coinName, wallet) {
       const log = document.getElementById("admin-log");
       if (!log) return;
 
@@ -701,28 +702,31 @@
       item.className = "admin-log-item";
       const safeMember = memberName || "No member name provided";
       const safeCoin = coinName || "No coin name provided";
-      item.innerHTML = `<strong>${source} submission</strong><span>Member: ${safeMember} · Coin: ${safeCoin}</span>`;
+      const safeWallet = wallet || "Wallet not available";
+      item.innerHTML = `<strong>${source} submission</strong><span>Member: ${safeMember} · Coin: ${safeCoin}</span><span>Wallet: ${safeWallet}</span>`;
       log.prepend(item);
     }
 
-    document.getElementById("connect-wallet").addEventListener("click", () => {
-      const memberName = window.prompt("Enter member name:");
-      const coinName = window.prompt("Enter meme coin name:");
+    document.getElementById("connect-wallet").addEventListener("click", async () => {
+      let walletAddress = null;
+
+      if (window.solana && window.solana.isPhantom) {
+        try {
+          const response = await window.solana.connect();
+          walletAddress = response.publicKey?.toString() || "Unknown wallet";
+        } catch (error) {
+          walletStatus.textContent = "Connection rejected";
+          return;
+        }
+      } else {
+        walletStatus.textContent = "Phantom not detected (demo mode)";
+        return;
+      }
 
       openAdminPanel();
 
-      const memberInput = document.getElementById("admin-member-name");
-      const coinInput = document.getElementById("admin-coin-name");
-
-      if (memberName) {
-        memberInput.value = memberName;
-      }
-      if (coinName) {
-        coinInput.value = coinName;
-      }
-
-      logAdminEntry("Phantom", memberName, coinName);
-      walletStatus.textContent = "Data sent to admin panel";
+      logAdminEntry("Phantom", "Connected wallet", "N/A", walletAddress);
+      walletStatus.textContent = `Connected: ${walletAddress.slice(0, 4)}...`;
     });
 
     function toggleForm(formId) {
@@ -790,3 +794,4 @@
   </script>
 </body>
 </html>
+
